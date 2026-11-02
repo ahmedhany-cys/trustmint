@@ -1,0 +1,239 @@
+{
+ "name": "gcp-cel",
+ "description": "Google attribute conditions in CEL, attribute mappings and principal/principalSet bindings.",
+ "snapshot": {
+  "schema": "trustmint/snapshot@1",
+  "context": {
+   "owners": [
+    "acme"
+   ],
+   "repos": [
+    "acme/app"
+   ]
+  },
+  "gcp": {
+   "providers": [
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/owner-eq/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.repository_owner == 'acme'"
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/starts-with/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.repository.startsWith('acme')"
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/owner-id-main/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.repository_owner_id == '100' && assertion.ref == 'refs/heads/main'"
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/unsupported/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.sub.extract('repo:{x}/') == 'acme'"
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/in-list/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.repository in ['acme/app', 'acme/lib']"
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/no-condition/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     }
+    },
+    {
+     "name": "projects/42/locations/global/workloadIdentityPools/protected-branch-or/providers/gh",
+     "state": "ACTIVE",
+     "oidc": {
+      "issuerUri": "https://token.actions.githubusercontent.com"
+     },
+     "attributeMapping": {
+      "google.subject": "assertion.sub",
+      "attribute.repository": "assertion.repository",
+      "attribute.repository_owner": "assertion.repository_owner"
+     },
+     "attributeCondition": "assertion.repository == 'acme/app' && (assertion.ref == 'refs/heads/main' || assertion.ref == 'refs/heads/release')"
+    }
+   ],
+   "service_accounts": [
+    {
+     "email": "owner-eq@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/owner-eq/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "starts-with@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/starts-with/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "owner-id-main@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/owner-id-main/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "unsupported@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/unsupported/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "in-list@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/in-list/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "no-condition@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/no-condition/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "protected-branch-or@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/protected-branch-or/*"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "no-condition-repo-bound@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principalSet://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/no-condition/attribute.repository/acme/app"
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "email": "subject-bound@p.iam.gserviceaccount.com",
+     "iam_policy": {
+      "bindings": [
+       {
+        "role": "roles/iam.workloadIdentityUser",
+        "members": [
+         "principal://iam.googleapis.com/projects/42/locations/global/workloadIdentityPools/owner-eq/subject/repo:acme/app:environment:prod"
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "expect": {
+  "owner-eq@p.iam.gserviceaccount.com": "TENANT",
+  "starts-with@p.iam.gserviceaccount.com": "PUBLIC",
+  "owner-id-main@p.iam.gserviceaccount.com": "TENANT",
+  "unsupported@p.iam.gserviceaccount.com": "UNDECIDED",
+  "in-list@p.iam.gserviceaccount.com": "PROJECT",
+  "no-condition@p.iam.gserviceaccount.com": "PUBLIC",
+  "protected-branch-or@p.iam.gserviceaccount.com": "PROTECTED",
+  "no-condition-repo-bound@p.iam.gserviceaccount.com": "PROJECT",
+  "subject-bound@p.iam.gserviceaccount.com": "PROTECTED"
+ }
+}

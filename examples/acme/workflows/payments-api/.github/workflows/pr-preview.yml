@@ -1,0 +1,21 @@
+# Builds a preview image for every pull request, including ones from forks.
+name: pr-preview
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::111122223333:role/gh-payments-immutable
+          aws-region: eu-west-1
+      - run: make preview-image

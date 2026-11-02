@@ -1,0 +1,75 @@
+name: TrustMint
+description: Find out who can mint a token your cloud trusts (OIDC workload identity federation audit for AWS, Google Cloud and Azure).
+branding:
+  icon: shield
+  color: blue
+inputs:
+  snapshot:
+    description: Space-separated TrustMint snapshot files.
+    required: false
+    default: ""
+  terraform-plan:
+    description: Space-separated `terraform show -json` plan files.
+    required: false
+    default: ""
+  workflows:
+    description: Space-separated OWNER/REPO=DIR pairs whose GitHub workflows should be checked.
+    required: false
+    default: ""
+  context:
+    description: Optional context JSON file (owners, repos, protected_refs, issuers).
+    required: false
+    default: ""
+  owner:
+    description: Space-separated organizations or groups you own.
+    required: false
+    default: ""
+  fail-on:
+    description: Fail when a finding at or above this severity exists (critical, high, medium, low, info, never).
+    required: false
+    default: high
+  upload-sarif:
+    description: Upload the SARIF report to GitHub code scanning (needs security-events write).
+    required: false
+    default: "true"
+outputs:
+  sarif:
+    description: Path of the SARIF report.
+    value: ${{ steps.scan.outputs.sarif }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install TrustMint
+      shell: bash
+      run: python -m pip install --quiet "${{ github.action_path }}"
+    - name: Scan
+      id: scan
+      shell: bash
+      env:
+        TM_SNAPSHOT: ${{ inputs.snapshot }}
+        TM_PLAN: ${{ inputs.terraform-plan }}
+        TM_WORKFLOWS: ${{ inputs.workflows }}
+        TM_CONTEXT: ${{ inputs.context }}
+        TM_OWNER: ${{ inputs.owner }}
+        TM_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        args=()
+        for f in $TM_SNAPSHOT; do args+=(--snapshot "$f"); done
+        for f in $TM_PLAN; do args+=(--terraform-plan "$f"); done
+        for w in $TM_WORKFLOWS; do args+=(--workflows "$w"); done
+        for o in $TM_OWNER; do args+=(--owner "$o"); done
+        if [ -n "$TM_CONTEXT" ]; then args+=(--context "$TM_CONTEXT"); fi
+        sarif="$RUNNER_TEMP/trustmint.sarif"
+        echo "sarif=$sarif" >> "$GITHUB_OUTPUT"
+        trustmint scan "${args[@]}" --format sarif --output "$sarif" --fail-on never
+        trustmint scan "${args[@]}" --format markdown --fail-on never >> "$GITHUB_STEP_SUMMARY"
+        trustmint scan "${args[@]}" --fail-on "$TM_FAIL_ON"
+    - name: Upload SARIF
+      if: always() && inputs.upload-sarif == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+        category: trustmint

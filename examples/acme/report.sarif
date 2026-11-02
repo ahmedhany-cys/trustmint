@@ -1,0 +1,1100 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "TrustMint",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/ahmedhany-cys/trustmint",
+          "rules": [
+            {
+              "id": "TM001",
+              "name": "TM001",
+              "shortDescription": {
+                "text": "Anyone on the CI platform can assume this identity"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm001",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM002",
+              "name": "TM002",
+              "shortDescription": {
+                "text": "Any repository or project in the organization can assume this identity"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm002",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM003",
+              "name": "TM003",
+              "shortDescription": {
+                "text": "Unprotected branches, pull requests or plans can assume this identity"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm003",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM004",
+              "name": "TM004",
+              "shortDescription": {
+                "text": "A workflow with an untrusted trigger can mint a token this identity accepts"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm004",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM005",
+              "name": "TM005",
+              "shortDescription": {
+                "text": "The trust is bound to names that someone else could take over"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm005",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM006",
+              "name": "TM006",
+              "shortDescription": {
+                "text": "No token satisfies this trust (dead or broken trust)"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm006",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM007",
+              "name": "TM007",
+              "shortDescription": {
+                "text": "The issuer is not a CI platform TrustMint models"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm007",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM008",
+              "name": "TM008",
+              "shortDescription": {
+                "text": "The trust could not be fully evaluated"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm008",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM009",
+              "name": "TM009",
+              "shortDescription": {
+                "text": "A workflow runs untrusted code with id-token: write"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm009",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            },
+            {
+              "id": "TM010",
+              "name": "TM010",
+              "shortDescription": {
+                "text": "The trust only accepts name-based GitHub subjects"
+              },
+              "helpUri": "https://github.com/ahmedhany-cys/trustmint/blob/main/docs/rules.md#tm010",
+              "properties": {
+                "tags": [
+                  "security",
+                  "oidc",
+                  "workload-identity"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "TM001",
+          "level": "error",
+          "message": {
+            "text": "analytics-reader@acme-prod.iam.gserviceaccount.com: Reachable by any GitHub user, from a repository in an account they create. The witness token below satisfies the trust and its audience check. Fix: Use an attribute condition on `assertion.repository_id` and `assertion.repository_owner_id`, and bind the service account to a single `attribute.repository_id/...` principalSet. Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "analytics-reader@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM001:gcp:analytics-reader@acme-prod.iam.gserviceaccount.com#0:github-legacy:github-pool/*"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:tm-probe-owner@43698738/tm-probe-repo@13741129:ref:refs/heads/main",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github-legacy",
+              "repository": "tm-probe-owner/tm-probe-repo",
+              "repository_owner": "tm-probe-owner",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "tm-probe-owner/tm-probe-repo/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM001",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-ci-readonly: Reachable by any GitHub user, from a repository in an account they create. The witness token below satisfies the trust and its audience check. Fix: Use StringEquals on `token.actions.githubusercontent.com:sub` (not StringLike). Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-ci-readonly",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM001:aws:arn:aws:iam::111122223333:role/gh-ci-readonly#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:tm-probe-owner@43698738/tm-probe-repo@13741129:ref:refs/heads/main",
+              "aud": "sts.amazonaws.com",
+              "repository": "tm-probe-owner/tm-probe-repo",
+              "repository_owner": "tm-probe-owner",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "tm-probe-owner/tm-probe-repo/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM001",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-release-main: Reachable by whoever owns or registers the GitHub account or organization `acmeattacker`. The witness token below satisfies the trust and its audience check. Fix: Use StringEquals on `token.actions.githubusercontent.com:sub` (not StringLike). Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-release-main",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM001:aws:arn:aws:iam::111122223333:role/gh-release-main#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acmeattacker@87330698/attacker@54139022:ref:refs/heads/main",
+              "aud": "sts.amazonaws.com",
+              "repository": "acmeattacker/attacker",
+              "repository_owner": "acmeattacker",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "acmeattacker/attacker/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM001",
+          "level": "error",
+          "message": {
+            "text": "projects/acme-artifacts: Reachable by any GitLab user who creates the group `acme-groupattacker`. The witness token below satisfies the trust and its audience check. Fix: Pin the full subject `project_path:GROUP/PROJECT:ref_type:branch:ref:main` with an exact match. Where the cloud can read extra claims (Google, flexible Entra credentials), also require `ref_protected == 'true'` and `project_id`, which survives renames."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "projects/acme-artifacts",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM001:gcp:projects/acme-artifacts#0:gitlab:gitlab-pool/*"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "project_path:acme-groupattacker/attacker/tm-probe-project:ref_type:branch:ref:main",
+              "aud": "https://gitlab.com",
+              "ref": "main",
+              "project_path": "acme-groupattacker/attacker/tm-probe-project",
+              "ref_protected": "true"
+            }
+          }
+        },
+        {
+          "ruleId": "TM002",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-org-admin: Reachable by any member of `acme` who can create or push to a repository the trust does not name (here `acme/attacker`). The witness token below satisfies the trust and its audience check. Fix: Use StringEquals on `token.actions.githubusercontent.com:sub` (not StringLike). Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-org-admin",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM002:aws:arn:aws:iam::111122223333:role/gh-org-admin#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "TENANT",
+            "witness": {
+              "sub": "repo:acme/attacker:ref:refs/heads/main",
+              "aud": "sts.amazonaws.com",
+              "repository": "acme/attacker",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "acme/attacker/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM002",
+          "level": "error",
+          "message": {
+            "text": "platform-automation: Reachable by any member of `acme` who can create or push to a repository the trust does not name (here `acme/attacker`). The witness token below satisfies the trust and its audience check. Fix: Use one federated credential per exact subject; in flexible credentials also match `repository_id` and `repository_owner_id`. Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "platform-automation",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM002:azure:platform-automation#any-acme-repo"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "TENANT",
+            "witness": {
+              "sub": "repo:acme/attacker:ref:refs/heads/main",
+              "aud": "api://AzureADTokenExchange",
+              "repository": "acme/attacker",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "acme/attacker/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM004",
+          "level": "error",
+          "message": {
+            "text": "analytics-reader@acme-prod.iam.gserviceaccount.com: `examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml#preview` runs on `pull_request_target` with id-token: write and checks out and runs pull request code, so anyone who can open a pull request controls a job that can mint this token. Its tokens carry the base branch `main`, which this trust accepts. Fix: Do not grant id-token: write to jobs triggered by pull_request_target, workflow_run or issue_comment. Run untrusted code in a `pull_request` job without cloud access, and deploy from a separate job on push to a protected branch, behind an environment with required reviewers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "analytics-reader@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM004:gcp:analytics-reader@acme-prod.iam.gserviceaccount.com#0:github:github-pool/*"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acme/payments-api:ref:refs/heads/main",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github",
+              "repository": "acme/payments-api",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "pull_request_target",
+              "job_workflow_ref": "acme/payments-api/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM004",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-org-admin: `examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml#preview` runs on `pull_request_target` with id-token: write and checks out and runs pull request code, so anyone who can open a pull request controls a job that can mint this token. Its tokens carry the base branch `main`, which this trust accepts. Fix: Do not grant id-token: write to jobs triggered by pull_request_target, workflow_run or issue_comment. Run untrusted code in a `pull_request` job without cloud access, and deploy from a separate job on push to a protected branch, behind an environment with required reviewers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-org-admin",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM004:aws:arn:aws:iam::111122223333:role/gh-org-admin#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acme/payments-api:ref:refs/heads/main",
+              "aud": "sts.amazonaws.com",
+              "repository": "acme/payments-api",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "pull_request_target",
+              "job_workflow_ref": "acme/payments-api/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM004",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-payments-immutable: `examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml#preview` runs on `pull_request_target` with id-token: write and checks out and runs pull request code, so anyone who can open a pull request controls a job that can mint this token. Its tokens carry the base branch `main`, which this trust accepts. The job names this identity directly. Fix: Do not grant id-token: write to jobs triggered by pull_request_target, workflow_run or issue_comment. Run untrusted code in a `pull_request` job without cloud access, and deploy from a separate job on push to a protected branch, behind an environment with required reviewers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-payments-immutable",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM004:aws:arn:aws:iam::111122223333:role/gh-payments-immutable#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acme@4417213/payments-api@921384422:ref:refs/heads/main",
+              "aud": "sts.amazonaws.com",
+              "repository": "acme/payments-api",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "pull_request_target",
+              "job_workflow_ref": "acme/payments-api/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM004",
+          "level": "error",
+          "message": {
+            "text": "payments-deployer: `examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml#preview` runs on `pull_request_target` with id-token: write and checks out and runs pull request code, so anyone who can open a pull request controls a job that can mint this token. Its tokens carry the base branch `main`, which this trust accepts. Fix: Do not grant id-token: write to jobs triggered by pull_request_target, workflow_run or issue_comment. Run untrusted code in a `pull_request` job without cloud access, and deploy from a separate job on push to a protected branch, behind an environment with required reviewers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "payments-deployer",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM004:azure:payments-deployer#payments-main"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acme/payments-api:ref:refs/heads/main",
+              "aud": "api://AzureADTokenExchange",
+              "repository": "acme/payments-api",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "pull_request_target",
+              "job_workflow_ref": "acme/payments-api/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM004",
+          "level": "error",
+          "message": {
+            "text": "platform-automation: `examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml#preview` runs on `pull_request_target` with id-token: write and checks out and runs pull request code, so anyone who can open a pull request controls a job that can mint this token. Its tokens carry the base branch `main`, which this trust accepts. Fix: Do not grant id-token: write to jobs triggered by pull_request_target, workflow_run or issue_comment. Run untrusted code in a `pull_request` job without cloud access, and deploy from a separate job on push to a protected branch, behind an environment with required reviewers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/workflows/payments-api/.github/workflows/pr-preview.yml"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "platform-automation",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM004:azure:platform-automation#any-acme-repo"
+          },
+          "properties": {
+            "security-severity": "9.5",
+            "reach": "PUBLIC",
+            "witness": {
+              "sub": "repo:acme/payments-api:ref:refs/heads/main",
+              "aud": "api://AzureADTokenExchange",
+              "repository": "acme/payments-api",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "pull_request_target",
+              "job_workflow_ref": "acme/payments-api/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM002",
+          "level": "error",
+          "message": {
+            "text": "analytics-reader@acme-prod.iam.gserviceaccount.com: Reachable by any member of `acme` who can create or push to a repository the trust does not name (here `acme/tm-probe-repo`). The witness token below satisfies the trust and its audience check. Fix: Use an attribute condition on `assertion.repository_id` and `assertion.repository_owner_id`, and bind the service account to a single `attribute.repository_id/...` principalSet. Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "analytics-reader@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM002:gcp:analytics-reader@acme-prod.iam.gserviceaccount.com#0:github:github-pool/*"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "TENANT",
+            "witness": {
+              "sub": "repo:acme@34701011/tm-probe-repo@87664473:ref:refs/heads/main",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github",
+              "repository": "acme/tm-probe-repo",
+              "repository_owner": "acme",
+              "ref": "refs/heads/main",
+              "event_name": "push",
+              "job_workflow_ref": "acme/tm-probe-repo/.github/workflows/deploy.yml@refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/circleci-deploy: Reachable by anyone who can trigger a pipeline in project `7d1f0b2e-0000-4000-8000-0000000000dd`, from any branch. The witness token below satisfies the trust and its audience check. Fix: Match the subject prefix `org/ORG_ID/project/PROJECT_ID/` and, where the cloud can read custom claims, `oidc.circleci.com/vcs-ref` or a restricted context id."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/circleci-deploy",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:aws:arn:aws:iam::111122223333:role/circleci-deploy#0:oidc.circleci.com/org/2b7e4c1a-0000-4000-8000-0000000000cc"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "org/2b7e4c1a-0000-4000-8000-0000000000cc/project/7d1f0b2e-0000-4000-8000-0000000000dd/user/attacker",
+              "aud": "2b7e4c1a-0000-4000-8000-0000000000cc",
+              "oidc.circleci.com/vcs-ref": "refs/heads/main"
+            }
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-infra-any-branch: Reachable by anyone who can push a branch in `acme/infra` (e.g. `attacker`). The witness token below satisfies the trust and its audience check. Fix: Use StringEquals on `token.actions.githubusercontent.com:sub` (not StringLike). Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-infra-any-branch",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:aws:arn:aws:iam::111122223333:role/gh-infra-any-branch#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "repo:acme/infra:ref:refs/heads/attacker",
+              "aud": "sts.amazonaws.com",
+              "repository": "acme/infra",
+              "repository_owner": "acme",
+              "ref": "refs/heads/attacker",
+              "event_name": "push",
+              "job_workflow_ref": "acme/infra/.github/workflows/deploy.yml@refs/heads/attacker"
+            }
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/tfc-prod-network: Reachable by anyone who can queue a plan in workspace `prod-network`. The witness token below satisfies the trust and its audience check. Fix: Pin the organization, project and workspace exactly, and use separate roles for `run_phase:plan` (read-only) and `run_phase:apply`. Never wildcard the organization."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/tfc-prod-network",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:aws:arn:aws:iam::111122223333:role/tfc-prod-network#0:app.terraform.io"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "organization:acme:project:Default Project:workspace:prod-network:run_phase:plan",
+              "aud": "aws.workload.identity",
+              "terraform_run_phase": "plan"
+            }
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "error",
+          "message": {
+            "text": "deployer@acme-prod.iam.gserviceaccount.com: Reachable by anyone who can push a branch in `acme/data-pipeline` (e.g. `tm-probe-branch`). The witness token below satisfies the trust and its audience check. Fix: Use an attribute condition on `assertion.repository_id` and `assertion.repository_owner_id`, and bind the service account to a single `attribute.repository_id/...` principalSet. Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "deployer@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:gcp:deployer@acme-prod.iam.gserviceaccount.com#0:github:acme/data-pipeline"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "repo:acme/data-pipeline:ref:refs/heads/tm-probe-branch",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github",
+              "repository": "acme/data-pipeline",
+              "repository_owner": "acme",
+              "ref": "refs/heads/tm-probe-branch",
+              "event_name": "push",
+              "job_workflow_ref": "acme/data-pipeline/.github/workflows/deploy.yml@refs/heads/tm-probe-branch"
+            }
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "error",
+          "message": {
+            "text": "deployer@acme-prod.iam.gserviceaccount.com: Reachable by anyone who can push a branch in `acme/data-pipeline` (e.g. `tm-probe-branch`). The witness token below satisfies the trust and its audience check. Fix: Use an attribute condition on `assertion.repository_id` and `assertion.repository_owner_id`, and bind the service account to a single `attribute.repository_id/...` principalSet. Pin it to the immutable subject of the one workflow context that needs it, e.g. `repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production` with deployment protection rules on that environment, or `...:ref:refs/heads/main` with branch protection. Remove wildcards in the owner and repository parts."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "deployer@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:gcp:deployer@acme-prod.iam.gserviceaccount.com#0:github-legacy:acme/data-pipeline"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "repo:acme/data-pipeline:ref:refs/heads/tm-probe-branch",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github-legacy",
+              "repository": "acme/data-pipeline",
+              "repository_owner": "acme",
+              "ref": "refs/heads/tm-probe-branch",
+              "event_name": "push",
+              "job_workflow_ref": "acme/data-pipeline/.github/workflows/deploy.yml@refs/heads/tm-probe-branch"
+            }
+          }
+        },
+        {
+          "ruleId": "TM007",
+          "level": "error",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/google-sso-broker: The trust accepts any token from https://accounts.google.com: it checks no claims. For a shared issuer that means anyone with an account there. Fix: Declare the platform behind this issuer in the context file (`issuers`), or review the trust by hand and require an exact subject."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/google-sso-broker",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM007:aws:arn:aws:iam::111122223333:role/google-sso-broker#0:accounts.google.com"
+          },
+          "properties": {
+            "security-severity": "8.0",
+            "reach": null,
+            "witness": null
+          }
+        },
+        {
+          "ruleId": "TM003",
+          "level": "warning",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/eks-payments-irsa: Reachable by anyone who can create a service account or pod in namespace `payments` (here `attacker`). The witness token below satisfies the trust and its audience check. Fix: Use StringEquals on `<issuer>:sub` with the exact `system:serviceaccount:NAMESPACE:NAME`, and `<issuer>:aud` = `sts.amazonaws.com`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/eks-payments-irsa",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM003:aws:arn:aws:iam::111122223333:role/eks-payments-irsa#0:oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C"
+          },
+          "properties": {
+            "security-severity": "5.5",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "system:serviceaccount:payments:attacker",
+              "aud": "sts.amazonaws.com"
+            }
+          }
+        },
+        {
+          "ruleId": "TM005",
+          "level": "warning",
+          "message": {
+            "text": "deployer@acme-prod.iam.gserviceaccount.com: The trust still matches when the owner and repository IDs change, so whoever takes over the name `acme/data-pipeline` after it is renamed, transferred or deleted would inherit it. It checks names, which can be reused, rather than immutable IDs. Fix: Bind to immutable identifiers: GitHub `repository_id` / `repository_owner_id` or the immutable `sub` format, GitLab `project_id`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "deployer@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM005:gcp:deployer@acme-prod.iam.gserviceaccount.com#0:github:acme/data-pipeline"
+          },
+          "properties": {
+            "security-severity": "5.5",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "repo:acme@80458764/data-pipeline@60587327:ref:refs/heads/tm-probe-branch",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github",
+              "repository": "acme/data-pipeline",
+              "repository_owner": "acme",
+              "ref": "refs/heads/tm-probe-branch",
+              "event_name": "push",
+              "job_workflow_ref": "acme/data-pipeline/.github/workflows/deploy.yml@refs/heads/tm-probe-branch"
+            }
+          }
+        },
+        {
+          "ruleId": "TM005",
+          "level": "warning",
+          "message": {
+            "text": "deployer@acme-prod.iam.gserviceaccount.com: The trust still matches when the owner and repository IDs change, so whoever takes over the name `acme/data-pipeline` after it is renamed, transferred or deleted would inherit it. It checks names, which can be reused, rather than immutable IDs. Fix: Bind to immutable identifiers: GitHub `repository_id` / `repository_owner_id` or the immutable `sub` format, GitLab `project_id`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "deployer@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM005:gcp:deployer@acme-prod.iam.gserviceaccount.com#0:github-legacy:acme/data-pipeline"
+          },
+          "properties": {
+            "security-severity": "5.5",
+            "reach": "PROJECT",
+            "witness": {
+              "sub": "repo:acme@80458764/data-pipeline@60587327:ref:refs/heads/tm-probe-branch",
+              "aud": "https://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github-legacy",
+              "repository": "acme/data-pipeline",
+              "repository_owner": "acme",
+              "ref": "refs/heads/tm-probe-branch",
+              "event_name": "push",
+              "job_workflow_ref": "acme/data-pipeline/.github/workflows/deploy.yml@refs/heads/tm-probe-branch"
+            }
+          }
+        },
+        {
+          "ruleId": "TM005",
+          "level": "note",
+          "message": {
+            "text": "gitlab-deployer@acme-prod.iam.gserviceaccount.com: The trust still matches when the owner and repository IDs change, so whoever takes over the path `acme-group/platform/deployer` after it is renamed, transferred or deleted would inherit it. It checks names, which can be reused, rather than immutable IDs. Fix: Bind to immutable identifiers: GitHub `repository_id` / `repository_owner_id` or the immutable `sub` format, GitLab `project_id`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "gitlab-deployer@acme-prod.iam.gserviceaccount.com",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM005:gcp:gitlab-deployer@acme-prod.iam.gserviceaccount.com#0:gitlab:platform/deployer"
+          },
+          "properties": {
+            "security-severity": "3.0",
+            "reach": "PROTECTED",
+            "witness": {
+              "sub": "project_path:acme-group/platform/deployer:ref_type:branch:ref:main",
+              "aud": "https://gitlab.com",
+              "ref": "main",
+              "project_path": "acme-group/platform/deployer",
+              "ref_protected": "true"
+            }
+          }
+        },
+        {
+          "ruleId": "TM006",
+          "level": "note",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-web-broken: `sub` is compared with 'repo:acme/web:*' using exact equality, so the wildcard is matched literally (use StringLike, or better, an exact subject).  Fix: Remove the trust if nothing uses it, or correct it so it names exactly the pipeline that needs it."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-web-broken",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM006:aws:arn:aws:iam::111122223333:role/gh-web-broken#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "1.0",
+            "reach": "NONE",
+            "witness": null
+          }
+        },
+        {
+          "ruleId": "TM010",
+          "level": "note",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-deploy-prod: Only name-based subjects (`repo:OWNER/REPO:...`) satisfy this trust. It keeps working for repositories that have not opted in, and will stop matching once the repository is renamed, transferred or opted into immutable subjects. Fix: Plan the migration: add the immutable subject `repo:OWNER@OWNER_ID/REPO@REPO_ID:...` before opting the repository in, then remove the name-based one."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-deploy-prod",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM010:aws:arn:aws:iam::111122223333:role/gh-deploy-prod#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "1.0",
+            "reach": "PROTECTED",
+            "witness": null
+          }
+        },
+        {
+          "ruleId": "TM010",
+          "level": "note",
+          "message": {
+            "text": "arn:aws:iam::111122223333:role/gh-infra-any-branch: Only name-based subjects (`repo:OWNER/REPO:...`) satisfy this trust. It keeps working for repositories that have not opted in, and will stop matching once the repository is renamed, transferred or opted into immutable subjects. Fix: Plan the migration: add the immutable subject `repo:OWNER@OWNER_ID/REPO@REPO_ID:...` before opting the repository in, then remove the name-based one."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "arn:aws:iam::111122223333:role/gh-infra-any-branch",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM010:aws:arn:aws:iam::111122223333:role/gh-infra-any-branch#0:token.actions.githubusercontent.com"
+          },
+          "properties": {
+            "security-severity": "1.0",
+            "reach": "PROJECT",
+            "witness": null
+          }
+        },
+        {
+          "ruleId": "TM010",
+          "level": "note",
+          "message": {
+            "text": "payments-deployer: Only name-based subjects (`repo:OWNER/REPO:...`) satisfy this trust. It keeps working for repositories that have not opted in, and will stop matching once the repository is renamed, transferred or opted into immutable subjects. Fix: Plan the migration: add the immutable subject `repo:OWNER@OWNER_ID/REPO@REPO_ID:...` before opting the repository in, then remove the name-based one."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/acme/snapshot.json"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "payments-deployer",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "trustmint/v1": "TM010:azure:payments-deployer#payments-main"
+          },
+          "properties": {
+            "security-severity": "1.0",
+            "reach": "PROTECTED",
+            "witness": null
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,524 @@
+{
+ "name": "aws-operators-and-issuers",
+ "description": "AWS condition operators, deny statements and issuer scoping across GitHub, GitLab, HCP Terraform, EKS and CircleCI.",
+ "snapshot": {
+  "schema": "trustmint/snapshot@1",
+  "context": {
+   "owners": [
+    "acme"
+   ],
+   "repos": [
+    "acme/app"
+   ]
+  },
+  "aws": {
+   "roles": [
+    {
+     "RoleName": "no-sub",
+     "Arn": "arn:aws:iam::111111111111:role/no-sub",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "owner-prefix",
+     "Arn": "arn:aws:iam::111111111111:role/owner-prefix",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "org-wide",
+     "Arn": "arn:aws:iam::111111111111:role/org-wide",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "repo-any-ref",
+     "Arn": "arn:aws:iam::111111111111:role/repo-any-ref",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "pull-request",
+     "Arn": "arn:aws:iam::111111111111:role/pull-request",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:pull_request"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "exact-main",
+     "Arn": "arn:aws:iam::111111111111:role/exact-main",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:ref:refs/heads/main"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "equals-wildcard",
+     "Arn": "arn:aws:iam::111111111111:role/equals-wildcard",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "for-any-value",
+     "Arn": "arn:aws:iam::111111111111:role/for-any-value",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "ForAnyValue:StringLike": {
+          "token.actions.githubusercontent.com:sub": [
+           "repo:acme/app:ref:refs/heads/main"
+          ]
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "deny-narrows",
+     "Arn": "arn:aws:iam::111111111111:role/deny-narrows",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/*"
+         }
+        }
+       },
+       {
+        "Effect": "Deny",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringNotLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "unknown-key",
+     "Arn": "arn:aws:iam::111111111111:role/unknown-key",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:ref:refs/heads/main"
+         },
+         "IpAddress": {
+          "aws:SourceIp": "203.0.113.0/24"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "ignore-case",
+     "Arn": "arn:aws:iam::111111111111:role/ignore-case",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEqualsIgnoreCase": {
+          "token.actions.githubusercontent.com:sub": "REPO:ACME/APP:REF:REFS/HEADS/MAIN"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "immutable-env",
+     "Arn": "arn:aws:iam::111111111111:role/immutable-env",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:sub": "repo:acme@100/app@200:environment:prod"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "branch-wildcard",
+     "Arn": "arn:aws:iam::111111111111:role/branch-wildcard",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:acme/app:ref:refs/heads/*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "reusable-workflow-only",
+     "Arn": "arn:aws:iam::111111111111:role/reusable-workflow-only",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "token.actions.githubusercontent.com:job_workflow_ref": "acme/shared/.github/workflows/deploy.yml@refs/heads/main"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "enterprise-no-sub",
+     "Arn": "arn:aws:iam::111111111111:role/enterprise-no-sub",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com/acme-enterprise"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity"
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "gitlab-group-wide",
+     "Arn": "arn:aws:iam::111111111111:role/gitlab-group-wide",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/gitlab.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "gitlab.com:sub": "project_path:acme/*"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "gitlab-no-sub",
+     "Arn": "arn:aws:iam::111111111111:role/gitlab-no-sub",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/gitlab.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity"
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "gitlab-exact",
+     "Arn": "arn:aws:iam::111111111111:role/gitlab-exact",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/gitlab.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "gitlab.com:sub": "project_path:acme/platform/api:ref_type:branch:ref:main"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "tfc-any-workspace",
+     "Arn": "arn:aws:iam::111111111111:role/tfc-any-workspace",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/app.terraform.io"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringLike": {
+          "app.terraform.io:sub": "organization:acme:project:*:workspace:*:run_phase:apply"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "tfc-apply-only",
+     "Arn": "arn:aws:iam::111111111111:role/tfc-apply-only",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/app.terraform.io"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "app.terraform.io:sub": "organization:acme:project:infra:workspace:prod:run_phase:apply"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "eks-no-sub",
+     "Arn": "arn:aws:iam::111111111111:role/eks-no-sub",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/ABCDEF0123456789"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity"
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "eks-exact",
+     "Arn": "arn:aws:iam::111111111111:role/eks-exact",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/ABCDEF0123456789"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+         "StringEquals": {
+          "oidc.eks.us-east-1.amazonaws.com/id/ABCDEF0123456789:sub": "system:serviceaccount:billing:billing-api"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "RoleName": "circleci-org-wide",
+     "Arn": "arn:aws:iam::111111111111:role/circleci-org-wide",
+     "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+       {
+        "Effect": "Allow",
+        "Principal": {
+         "Federated": "arn:aws:iam::111111111111:oidc-provider/oidc.circleci.com/org/11111111-2222-4333-8444-555555555555"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "expect": {
+  "arn:aws:iam::111111111111:role/no-sub": "PUBLIC",
+  "arn:aws:iam::111111111111:role/owner-prefix": "PUBLIC",
+  "arn:aws:iam::111111111111:role/org-wide": "TENANT",
+  "arn:aws:iam::111111111111:role/repo-any-ref": "PROJECT",
+  "arn:aws:iam::111111111111:role/pull-request": "PROJECT",
+  "arn:aws:iam::111111111111:role/exact-main": "PROTECTED",
+  "arn:aws:iam::111111111111:role/equals-wildcard": "NONE",
+  "arn:aws:iam::111111111111:role/for-any-value": "PROTECTED",
+  "arn:aws:iam::111111111111:role/deny-narrows": "PROJECT",
+  "arn:aws:iam::111111111111:role/unknown-key": "UNDECIDED",
+  "arn:aws:iam::111111111111:role/ignore-case": "PROTECTED",
+  "arn:aws:iam::111111111111:role/immutable-env": "PROTECTED",
+  "arn:aws:iam::111111111111:role/branch-wildcard": "PROJECT",
+  "arn:aws:iam::111111111111:role/reusable-workflow-only": "PUBLIC",
+  "arn:aws:iam::111111111111:role/enterprise-no-sub": "TENANT",
+  "arn:aws:iam::111111111111:role/gitlab-group-wide": "TENANT",
+  "arn:aws:iam::111111111111:role/gitlab-no-sub": "PUBLIC",
+  "arn:aws:iam::111111111111:role/gitlab-exact": "PROTECTED",
+  "arn:aws:iam::111111111111:role/tfc-any-workspace": "TENANT",
+  "arn:aws:iam::111111111111:role/tfc-apply-only": "PROTECTED",
+  "arn:aws:iam::111111111111:role/eks-no-sub": "TENANT",
+  "arn:aws:iam::111111111111:role/eks-exact": "PROTECTED",
+  "arn:aws:iam::111111111111:role/circleci-org-wide": "TENANT"
+ }
+}

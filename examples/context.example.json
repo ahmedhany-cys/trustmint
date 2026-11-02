@@ -1,0 +1,12 @@
+{
+  "owners": ["acme"],
+  "repos": ["acme/payments-api", "acme/infra"],
+  "protected_refs": {
+    "acme/payments-api": ["main", "production"],
+    "acme/infra": ["main"]
+  },
+  "issuers": {
+    "https://ghe.acme.internal/_services/token": {"platform": "github", "scope": "tenant"},
+    "https://git.acme.internal": {"platform": "gitlab", "scope": "tenant"}
+  }
+}

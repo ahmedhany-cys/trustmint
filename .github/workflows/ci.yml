@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e '.[dev]'
+      - run: ruff check src tests
+      - run: ruff format --check src tests
+      - run: pytest -q
+      - run: trustmint selfcheck
+      - name: Scan the demo estate end to end
+        run: |
+          trustmint scan -s examples/acme/snapshot.json \
+            -w acme/payments-api=examples/acme/workflows/payments-api \
+            -f json -o report.json --fail-on never
+          python -c "import json; d=json.load(open('report.json')); assert d['summary']['trusts'] == 20, d['summary']; print(d['summary'])"
+      - name: Fail-on gate returns non-zero on the demo estate
+        run: |
+          set +e
+          trustmint scan -s examples/acme/snapshot.json > /dev/null
+          test $? -eq 1
+
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the composite action against the Terraform plan example
+        uses: ./
+        with:
+          terraform-plan: examples/terraform/plan.json
+          owner: acme
+          fail-on: never
+          upload-sarif: "false"

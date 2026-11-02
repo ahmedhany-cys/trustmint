@@ -1,0 +1,581 @@
+{
+  "schema": "trustmint/snapshot@1",
+  "description": "Synthetic estate for the fictional company Acme. Every account ID, project number and ID below is made up.",
+  "context": {
+    "owners": [
+      "acme",
+      "acme-group"
+    ],
+    "repos": [
+      "acme/payments-api",
+      "acme/infra",
+      "acme/web",
+      "acme/data-pipeline",
+      "acme-group/platform/deployer",
+      "acme/prod-network"
+    ],
+    "protected_refs": {
+      "acme/payments-api": [
+        "main",
+        "production"
+      ]
+    },
+    "issuers": {
+      "https://eastus.oic.prod-aks.azure.com/0f1e2d3c-0000-4000-8000-000000000001/5a6b7c8d-0000-4000-8000-000000000002": {
+        "platform": "kubernetes",
+        "scope": "tenant"
+      }
+    }
+  },
+  "aws": {
+    "account_id": "111122223333",
+    "oidc_providers": [
+      {
+        "Arn": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com",
+        "Url": "token.actions.githubusercontent.com",
+        "ClientIDList": [
+          "sts.amazonaws.com"
+        ]
+      },
+      {
+        "Arn": "arn:aws:iam::111122223333:oidc-provider/app.terraform.io",
+        "Url": "app.terraform.io",
+        "ClientIDList": [
+          "aws.workload.identity"
+        ]
+      },
+      {
+        "Arn": "arn:aws:iam::111122223333:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C",
+        "Url": "oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C",
+        "ClientIDList": [
+          "sts.amazonaws.com"
+        ]
+      },
+      {
+        "Arn": "arn:aws:iam::111122223333:oidc-provider/oidc.circleci.com/org/2b7e4c1a-0000-4000-8000-0000000000cc",
+        "Url": "oidc.circleci.com/org/2b7e4c1a-0000-4000-8000-0000000000cc",
+        "ClientIDList": [
+          "2b7e4c1a-0000-4000-8000-0000000000cc"
+        ]
+      }
+    ],
+    "roles": [
+      {
+        "RoleName": "gh-deploy-prod",
+        "Arn": "arn:aws:iam::111122223333:role/gh-deploy-prod",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                  "token.actions.githubusercontent.com:sub": "repo:acme/payments-api:environment:production"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "PowerUserAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "gh-ci-readonly",
+        "Arn": "arn:aws:iam::111122223333:role/gh-ci-readonly",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "ReadOnlyAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "gh-org-admin",
+        "Arn": "arn:aws:iam::111122223333:role/gh-org-admin",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:acme/*"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "AdministratorAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "gh-release-main",
+        "Arn": "arn:aws:iam::111122223333:role/gh-release-main",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:acme*:ref:refs/heads/main"
+                }
+              }
+            }
+          ]
+        },
+        "InlinePolicies": {
+          "release-artifacts": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:PutObject",
+                  "s3:GetObject"
+                ],
+                "Resource": "arn:aws:s3:::acme-releases/*"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "RoleName": "gh-infra-any-branch",
+        "Arn": "arn:aws:iam::111122223333:role/gh-infra-any-branch",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:acme/infra:*"
+                }
+              }
+            }
+          ]
+        },
+        "InlinePolicies": {
+          "state-bucket": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject",
+                  "dynamodb:PutItem"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "RoleName": "gh-web-broken",
+        "Arn": "arn:aws:iam::111122223333:role/gh-web-broken",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:sub": "repo:acme/web:*"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "CloudFrontFullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/CloudFrontFullAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "gh-payments-immutable",
+        "Arn": "arn:aws:iam::111122223333:role/gh-payments-immutable",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                  "token.actions.githubusercontent.com:sub": "repo:acme@4417213/payments-api@921384422:ref:refs/heads/main"
+                }
+              }
+            }
+          ]
+        },
+        "InlinePolicies": {
+          "publish": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ecr:PutImage",
+                  "ecr:UploadLayerPart"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "RoleName": "eks-payments-irsa",
+        "Arn": "arn:aws:iam::111122223333:role/eks-payments-irsa",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringLike": {
+                  "oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C:sub": "system:serviceaccount:payments:*",
+                  "oidc.eks.eu-west-1.amazonaws.com/id/7C1A0E5D3B9F4A2E8D6C:aud": "sts.amazonaws.com"
+                }
+              }
+            }
+          ]
+        },
+        "InlinePolicies": {
+          "secrets": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": "secretsmanager:GetSecretValue",
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "RoleName": "tfc-prod-network",
+        "Arn": "arn:aws:iam::111122223333:role/tfc-prod-network",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/app.terraform.io"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "app.terraform.io:aud": "aws.workload.identity"
+                },
+                "StringLike": {
+                  "app.terraform.io:sub": "organization:acme:project:*:workspace:prod-network:run_phase:*"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "AdministratorAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "circleci-deploy",
+        "Arn": "arn:aws:iam::111122223333:role/circleci-deploy",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/oidc.circleci.com/org/2b7e4c1a-0000-4000-8000-0000000000cc"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringLike": {
+                  "oidc.circleci.com/org/2b7e4c1a-0000-4000-8000-0000000000cc:sub": "org/2b7e4c1a-0000-4000-8000-0000000000cc/project/7d1f0b2e-0000-4000-8000-0000000000dd/user/*"
+                }
+              }
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "AmazonECS_FullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+          }
+        ]
+      },
+      {
+        "RoleName": "google-sso-broker",
+        "Arn": "arn:aws:iam::111122223333:role/google-sso-broker",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "accounts.google.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity"
+            }
+          ]
+        },
+        "AttachedManagedPolicies": [
+          {
+            "PolicyName": "AmazonS3ReadOnlyAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+          }
+        ]
+      }
+    ]
+  },
+  "gcp": {
+    "providers": [
+      {
+        "name": "projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github",
+        "state": "ACTIVE",
+        "disabled": false,
+        "oidc": {
+          "issuerUri": "https://token.actions.githubusercontent.com",
+          "allowedAudiences": []
+        },
+        "attributeMapping": {
+          "google.subject": "assertion.sub",
+          "attribute.repository": "assertion.repository",
+          "attribute.repository_owner": "assertion.repository_owner",
+          "attribute.repository_id": "assertion.repository_id"
+        },
+        "attributeCondition": "assertion.repository_owner == 'acme'"
+      },
+      {
+        "name": "projects/987654321098/locations/global/workloadIdentityPools/github-pool/providers/github-legacy",
+        "state": "ACTIVE",
+        "disabled": false,
+        "oidc": {
+          "issuerUri": "https://token.actions.githubusercontent.com",
+          "allowedAudiences": []
+        },
+        "attributeMapping": {
+          "google.subject": "assertion.sub",
+          "attribute.repository": "assertion.repository"
+        }
+      },
+      {
+        "name": "projects/987654321098/locations/global/workloadIdentityPools/gitlab-pool/providers/gitlab",
+        "state": "ACTIVE",
+        "disabled": false,
+        "oidc": {
+          "issuerUri": "https://gitlab.com",
+          "allowedAudiences": [
+            "https://gitlab.com"
+          ]
+        },
+        "attributeMapping": {
+          "google.subject": "assertion.sub",
+          "attribute.project_path": "assertion.project_path"
+        },
+        "attributeCondition": "assertion.namespace_path.startsWith('acme-group') && assertion.ref_protected == 'true'"
+      }
+    ],
+    "service_accounts": [
+      {
+        "email": "deployer@acme-prod.iam.gserviceaccount.com",
+        "roles": [
+          "roles/editor"
+        ],
+        "iam_policy": {
+          "bindings": [
+            {
+              "role": "roles/iam.workloadIdentityUser",
+              "members": [
+                "principalSet://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/attribute.repository/acme/data-pipeline"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "email": "analytics-reader@acme-prod.iam.gserviceaccount.com",
+        "roles": [
+          "roles/bigquery.dataViewer"
+        ],
+        "iam_policy": {
+          "bindings": [
+            {
+              "role": "roles/iam.workloadIdentityUser",
+              "members": [
+                "principalSet://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/github-pool/*"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "email": "gitlab-deployer@acme-prod.iam.gserviceaccount.com",
+        "roles": [
+          "roles/run.admin"
+        ],
+        "iam_policy": {
+          "bindings": [
+            {
+              "role": "roles/iam.workloadIdentityUser",
+              "members": [
+                "principalSet://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/gitlab-pool/attribute.project_path/acme-group/platform/deployer"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "resource_policies": [
+      {
+        "resource": "projects/acme-artifacts",
+        "iam_policy": {
+          "bindings": [
+            {
+              "role": "roles/artifactregistry.writer",
+              "members": [
+                "principalSet://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/gitlab-pool/*"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "azure": {
+    "identities": [
+      {
+        "name": "payments-deployer",
+        "kind": "app",
+        "role_assignments": [
+          {
+            "role": "Contributor",
+            "scope": "/subscriptions/00000000-0000-4000-8000-0000000000a1/resourceGroups/payments"
+          }
+        ],
+        "federated_credentials": [
+          {
+            "name": "payments-main",
+            "issuer": "https://token.actions.githubusercontent.com",
+            "subject": "repo:acme/payments-api:ref:refs/heads/main",
+            "audiences": [
+              "api://AzureADTokenExchange"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "platform-automation",
+        "kind": "app",
+        "role_assignments": [
+          {
+            "role": "Owner",
+            "scope": "/subscriptions/00000000-0000-4000-8000-0000000000a1"
+          }
+        ],
+        "federated_credentials": [
+          {
+            "name": "any-acme-repo",
+            "issuer": "https://token.actions.githubusercontent.com",
+            "claimsMatchingExpression": {
+              "value": "claims['sub'] matches 'repo:acme/*'",
+              "languageVersion": 1
+            },
+            "audiences": [
+              "api://AzureADTokenExchange"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "aks-orders-workload",
+        "kind": "managed_identity",
+        "role_assignments": [
+          {
+            "role": "Storage Blob Data Reader",
+            "scope": "/subscriptions/00000000-0000-4000-8000-0000000000a1/resourceGroups/orders"
+          }
+        ],
+        "federated_credentials": [
+          {
+            "name": "orders-sa",
+            "issuer": "https://eastus.oic.prod-aks.azure.com/0f1e2d3c-0000-4000-8000-000000000001/5a6b7c8d-0000-4000-8000-000000000002/",
+            "subject": "system:serviceaccount:orders:orders-api",
+            "audiences": [
+              "api://AzureADTokenExchange"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

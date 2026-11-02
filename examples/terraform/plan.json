@@ -1,0 +1,108 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_openid_connect_provider.github",
+          "mode": "managed",
+          "type": "aws_iam_openid_connect_provider",
+          "name": "github",
+          "values": {
+            "url": "https://token.actions.githubusercontent.com",
+            "client_id_list": [
+              "sts.amazonaws.com"
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.deploy",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "deploy",
+          "values": {
+            "name": "github-deploy",
+            "assume_role_policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Federated\": \"arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com\"}, \"Action\": \"sts:AssumeRoleWithWebIdentity\", \"Condition\": {\"StringEquals\": {\"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\"}, \"StringLike\": {\"token.actions.githubusercontent.com:sub\": \"repo:acme/*\"}}}]}"
+          }
+        },
+        {
+          "address": "aws_iam_role_policy_attachment.deploy_admin",
+          "mode": "managed",
+          "type": "aws_iam_role_policy_attachment",
+          "name": "deploy_admin",
+          "values": {
+            "role": "github-deploy",
+            "policy_arn": "arn:aws:iam::aws:policy/AdministratorAccess"
+          }
+        },
+        {
+          "address": "aws_iam_role.pending",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "pending",
+          "values": {
+            "name": "pending-role"
+          }
+        },
+        {
+          "address": "azuread_application_federated_identity_credential.main",
+          "mode": "managed",
+          "type": "azuread_application_federated_identity_credential",
+          "name": "main",
+          "values": {
+            "application_id": "/applications/00000000-0000-4000-8000-0000000000b2",
+            "display_name": "github-main",
+            "issuer": "https://token.actions.githubusercontent.com",
+            "subject": "repo:acme/app:ref:refs/heads/main",
+            "audiences": [
+              "api://AzureADTokenExchange"
+            ]
+          }
+        }
+      ],
+      "child_modules": [
+        {
+          "address": "module.gcp_wif",
+          "resources": [
+            {
+              "address": "module.gcp_wif.google_iam_workload_identity_pool_provider.github",
+              "mode": "managed",
+              "type": "google_iam_workload_identity_pool_provider",
+              "name": "github",
+              "values": {
+                "project": "987654321098",
+                "workload_identity_pool_id": "ci-pool",
+                "workload_identity_pool_provider_id": "github",
+                "attribute_mapping": {
+                  "google.subject": "assertion.sub",
+                  "attribute.repository": "assertion.repository"
+                },
+                "attribute_condition": null,
+                "disabled": false,
+                "oidc": [
+                  {
+                    "issuer_uri": "https://token.actions.githubusercontent.com",
+                    "allowed_audiences": []
+                  }
+                ]
+              }
+            },
+            {
+              "address": "module.gcp_wif.google_service_account_iam_member.wif",
+              "mode": "managed",
+              "type": "google_service_account_iam_member",
+              "name": "wif",
+              "values": {
+                "service_account_id": "projects/acme-prod/serviceAccounts/ci@acme-prod.iam.gserviceaccount.com",
+                "role": "roles/iam.workloadIdentityUser",
+                "member": "principalSet://iam.googleapis.com/projects/987654321098/locations/global/workloadIdentityPools/ci-pool/attribute.repository/acme/app"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "resource_changes": []
+}

@@ -1,0 +1,138 @@
+{
+ "name": "azure-entra",
+ "description": "Entra classic (exact subject) and flexible federated identity credentials.",
+ "snapshot": {
+  "schema": "trustmint/snapshot@1",
+  "context": {
+   "owners": [
+    "acme"
+   ],
+   "repos": [
+    "acme/app"
+   ]
+  },
+  "azure": {
+   "identities": [
+    {
+     "name": "classic-exact",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "classic-exact",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "subject": "repo:acme/app:ref:refs/heads/main"
+      }
+     ]
+    },
+    {
+     "name": "classic-literal-star",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "classic-literal-star",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "subject": "repo:acme/*"
+      }
+     ]
+    },
+    {
+     "name": "flex-repo-id",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "flex-repo-id",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "claimsMatchingExpression": {
+        "value": "claims['sub'] matches 'repo:acme/app:*' and claims['repository_id'] eq '200'",
+        "languageVersion": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "flex-everything",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "flex-everything",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "claimsMatchingExpression": {
+        "value": "claims['sub'] matches 'repo:*'",
+        "languageVersion": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "flex-org",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "flex-org",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "claimsMatchingExpression": {
+        "value": "(claims['sub'] matches 'repo:acme/*') and claims['repository_owner'] eq 'acme'",
+        "languageVersion": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "flex-unsupported",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "flex-unsupported",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "claimsMatchingExpression": {
+        "value": "claims['sub'] startswith 'repo:acme/'",
+        "languageVersion": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "classic-env-immutable",
+     "kind": "app",
+     "federated_credentials": [
+      {
+       "name": "classic-env-immutable",
+       "issuer": "https://token.actions.githubusercontent.com",
+       "audiences": [
+        "api://AzureADTokenExchange"
+       ],
+       "subject": "repo:acme@100/app@200:environment:production"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "expect": {
+  "classic-exact": "PROTECTED",
+  "classic-literal-star": "NONE",
+  "flex-repo-id": "PROJECT",
+  "flex-everything": "PUBLIC",
+  "flex-org": "TENANT",
+  "flex-unsupported": "UNDECIDED",
+  "classic-env-immutable": "PROTECTED"
+ }
+}
